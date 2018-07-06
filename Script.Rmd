@@ -2,7 +2,7 @@
 title: "Essential Skills in R | Center for Brain Immunology and Glia"
 author: "Marieke K Jones, PhD"
 date: "04/11/2018"
-output: html_document
+output: github_document
 ---
 
 #Slides
@@ -276,7 +276,7 @@ Now we can easily see the structure of the tibble
 If you want to see the whole dataset, there are two ways to do this. First, you can click on the name of the data.frame in the **Environment** panel in RStudio. Or you could use the `View()` function (_with a capital V_).
 
 ```{r view, eval=FALSE}
-View(nh)
+#View(nh)
 ```
 
 ## Inspecting data.frame objects
@@ -367,7 +367,7 @@ Let's see how it works ...
 # Look at just children
 filter(nh, Age < 18)
 
-View(filter(nh, Age < 18))
+length(filter(nh, Age < 18))
 
 # Look at children who are obese (BMI >= 30)
 filter(nh, Age < 18 & BMI >= 30)
