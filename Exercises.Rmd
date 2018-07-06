@@ -1,0 +1,36 @@
+---
+title: "Essential Skills in R"
+author: "with Marieke Jones"
+date: "Exercises"
+output:
+  pdf_document: default
+---
+
+**EXERCISE 1**
+
+A. Let's say a person has a height of 73 (inches) and a weight of 203 (lbs). Create r objects labeled 'height' and 'weight'.
+
+B. Convert `weight` to `weight_kg` by dividing `weight` by 2.2. Convert `height` to `height_m` by dividing `height` by 39.37
+
+C. Calculate a new object `bmi` where BMI = weight_kg / (height_m*height_m)
+
+**EXERCISE 2**
+
+A. What is the maximum Pulse recorded in our dataset? (hint: get help on the `max` function with `?max`)
+
+B. What's the standard deviation of Weight (hint: get help on the `sd` function with `?sd`).
+
+C. What's the range of systolic blood pressure represented in the data? (hint: `range()`). 
+
+
+**EXERCISE 3**
+
+A. Use `filter()` to find out how many people there are in this dataset who are current smokers (`SmokingStatus == "Current"`)
+
+**EXERCISE 4**
+
+A. Use `filter()` followed by `group_by()` and `summarize()` to find the mean BMI by Smoking Status for people who have Diabetes.
+
+**EXERCISE 5**  
+
+A. Create a plot showing the relationship between RelationshipStatus and the Number of Alcoholic drinks yearly (`AlcoholYear`). Optionally, color the bars by Gender.

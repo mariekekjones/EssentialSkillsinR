@@ -1,0 +1,186 @@
+---
+title: "Essential Skills in R"
+author: "with Marieke Jones"
+date: "Homework"
+output:
+  pdf_document: default
+---
+
+```{r, echo=FALSE, include = FALSE}
+library(tidyverse)
+gm<- read_csv("gapminder.csv")
+knitr::opts_chunk$set(fig.width=5, fig.height=3)
+```
+
+# Getting Started
+
+Create a new R project directory for the homework assignment. (In RStudio > File > New Project)
+
+We're going to work with a different dataset for the homework than we did in the workshop. This one is a cleaned-up excerpt from the famous [Gapminder dataset](http://www.gapminder.org/data/). Download **gapminder.csv** from [The HSL Workshop Materials page](data.hsl.virginia.edu/workshop-materials) (data.hsl.virginia.edu/workshop-materials). Save it into your project directory so you can access it easily from R.
+
+Load the **tidyverse** OR the **readr**, **dplyr** and **ggplot2** packages, and read the gapminder data into R using the `read_csv()` function. Assign the data to an object called `gm`. Run `gm` to display it.  
+
+**NUMBER 1**  
+  
+  
+A. What are the dimensions of this dataset?
+
+```{r, echo = FALSE}
+dim(gm)
+```
+
+B. Calculate the mean life expectancy (`lifeExp`) overall (for all the data).
+```{r, echo = FALSE}
+mean(gm$lifeExp)
+```
+
+C. How many countries are included in this dataset? Nest the functions `length()` and `unique()` together to find out.
+
+```{r, echo=FALSE}
+length(unique(gm$country))
+```
+
+# dplyr
+Many of the below problems deal with the dplyr package. If you want to learn more about dplyr, [Here is the package introduction](https://dplyr.tidyverse.org/) (https://dplyr.tidyverse.org/) and [Here is a nice tutorial](https://rpubs.com/justmarkham/dplyr-tutorial) (https://rpubs.com/justmarkham/dplyr-tutorial)
+
+**NUMBER 2**  
+
+A. What is the lowest (`min()`) life expectancy?
+```{r, echo = FALSE}
+min(gm$lifeExp)
+```
+
+B. Which observation (country & year) had the lowest life expectancy? One suggestion for a solution is to use the `%>%` from the {tidyverse} or {dplyr} to take the dataset then `arrange()` to sort the data by life expectancy then `head(1)` to get the first row of the sorted dataframe. There are other ways to solve this too.
+
+```{r, echo=FALSE}
+gm %>%
+  arrange(lifeExp) %>%
+  head(1)
+```
+
+C. Find the 10 observations with the lowest life expectancy. Use the code from B as a start. 
+```{r, echo=FALSE}
+gm %>%
+  arrange(lifeExp) %>%
+  head(10)
+```
+
+D. What is the average gdpPercap for these observations? Use the code from C and then add a call to `summarize()`. Compare that number to the average gdpPercap for the whole dataset.
+```{r, echo=FALSE}
+gm %>%
+  arrange(lifeExp) %>%
+  head(10) %>%
+  summarize(mean(gdpPercap))
+
+#mean gdp overall
+mean(gm$gdpPercap) 
+```
+
+E. Use `filter()` then `group_by()` and then `summarize()` to find the mean life expectancy for each continent in the year 1997.
+```{r, echo=FALSE}
+gm %>%
+  filter(year == 1997) %>%
+  group_by(continent) %>%
+  summarize(mean(lifeExp))
+```
+
+F. How many unique countries are represented per continent? (Try `group_by` then `summarize(n_distinct()`)
+```{r, echo=FALSE}
+gm %>%
+  group_by(continent) %>%
+  summarise(n_distinct(country))
+```
+
+# ggplot2
+
+These next problems will deal with ggplot2. The ggplot2 package allows you to build a plot layer-by-layer by specifying:
+
+- **aesthetics** that map variables in the data to axes on the plot or to plotting size, shape, color, etc.,
+- a **geom**, which specifies how the data are represented on the plot (points, lines, bars, etc.),
+- a **stat**, a statistical transformation or summary of the data applied prior to plotting,
+- **facets**, which we've already seen above, that allow the data to be divided into chunks on the basis of other categorical or continuous variables and the same plot drawn for each chunk.
+
+A great resource for help is the [R Graphics Cookbook](http://www.cookbook-r.com/Graphs/) (http://www.cookbook-r.com/Graphs/)
+
+**NUMBER 3**  
+
+A. Create a blank canvas of a plot showing `gdpPercap` on the X-axis and `lifeExp` on the Y-axis
+
+```{r canvas, echo=FALSE}
+ggplot(gm, aes(x = gdpPercap, y = lifeExp))
+```
+
+B. Add `geom_point()` to the above canvas.  
+
+```{r, echo=FALSE}
+ggplot(gm, aes(x = gdpPercap, y = lifeExp)) + 
+  geom_point()
+```
+
+C. Based on the above plot, let's take the log10 of the x-axis. Add `scale_x_log10()` to the canvas and plot the points  
+  
+```{r, echo=FALSE}
+ggplot(gm, aes(x = gdpPercap, y = lifeExp)) + 
+  scale_x_log10() +
+  geom_point()
+```
+
+D. Keep the log10 x-axis for the rest of the plots. Now change the color of the points (`color == "blue"`) and make them larger (`size = 3`)  
+
+```{r, echo = FALSE}
+ggplot(gm, aes(x = gdpPercap, y = lifeExp)) + 
+  scale_x_log10() +
+  geom_point(color = "blue", size = 3)
+```
+
+E. Instead of changing the color and point size in the call to geom_point, let's color by continent (as a call to `aes`)  
+  
+```{r, echo = FALSE}
+ggplot(gm, aes(x = gdpPercap, y = lifeExp)) + 
+  scale_x_log10() +
+  geom_point(aes(color = continent))
+```
+
+**NUMBER 4**  
+
+A. Make a scatter plot of `year` on the x against `lifeExp` on the y-axis, faceted by continent (`facet_wrap(~ continent)`)  
+  
+```{r, echo=FALSE}
+g <- ggplot(gm, aes(year, lifeExp))
+g <- g + geom_point() + facet_wrap(~continent)
+g
+```
+
+B. Add `geom_smooth()` with method = "lm" or "loess" to each facet. _Hint_: put the geom_smooth before the facet_wrap(). _I've shown the method = "lm" here_  
+  
+```{r, echo=FALSE}
+g <- ggplot(gm, aes(year, lifeExp))
+g <- g + geom_point() + geom_smooth(method = "lm") + facet_wrap(~continent)
+g
+```
+  
+**NUMBER 5**  
+  
+A. Make a blank canvas with continent on the x and lifeExp on the y  
+```{r, echo=FALSE}
+ggplot(gm, aes(continent, lifeExp))
+```
+
+B. Add geom_boxplot() to the above canvas. For categorical variables, boxplots are a nice way to visualize data.  
+  
+```{r, echo=FALSE}
+ggplot(gm, aes(continent, lifeExp)) + geom_boxplot()
+```
+
+C. Use fill = "cornflower blue" to color the boxplots and add theme_bw() to the canvas to plot without the gray background. Check out other themes too!  
+  
+```{r, echo=FALSE}
+ggplot(gm, aes(continent, lifeExp)) + geom_boxplot(fill = "cornflower blue") + theme_bw()
+```
+
+
+# Solutions
+
+- Want to see the worked answers? Check them out at on the [Workshop Materials page](data.hsl.virginia.edu/workshop-materials) (data.hsl.virginia.edu/workshop-materials)
+
+- Have questions about code? Email Marieke Jones at marieke@virginia.edu
